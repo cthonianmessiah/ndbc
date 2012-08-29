@@ -42,6 +42,14 @@ Date        Author                Description
                                   manipulate and retrieve data by submitting SQL statements.
 */
 
+/*
+TODO:
+
+Found out on 2012-08-09 that external handles, when passed to and from a child process, are not always still usable when
+returned to the main process.  Need to create a test version where the connection can be checked using C code only to
+determine whether a child process can connect to a database at all.
+*/
+
 /* Include node.js API.
  */
 #include <node.h>
@@ -6495,6 +6503,8 @@ try {
         case SQL_INTERVAL_HOUR_TO_SECOND:
         case SQL_INTERVAL_MINUTE_TO_SECOND:
         case SQL_GUID:
+          // Add 1 to data length to fix date length bug
+          *dataLen += 1;
           // Add 3 for quotes and a comma
           recLen += *dataLen + 3;
           columnDesc = String::Concat(columnDesc, String::NewSymbol("q"));
